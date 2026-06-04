@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funkin' News</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0010;
+    --bg2: #100020;
+    --bg3: #14002a;
+    --neon-purple: #bf00ff;
+    --neon-blue: #00cfff;
+    --neon-pink: #ff00aa;
+    --neon-yellow: #ffe600;
+    --neon-green: #00ff88;
+    --text: #e8d5ff;
+    --text-dim: #8a6aaa;
+    --card: #140028;
+    --card-border: #2a0055;
+    --glow-purple: 0 0 8px #bf00ff88, 0 0 20px #bf00ff44;
+    --glow-blue: 0 0 8px #00cfff88, 0 0 20px #00cfff44;
+    --glow-pink: 0 0 8px #ff00aa88, 0 0 20px #ff00aa44;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.12) 3px,
+      rgba(0,0,0,0.12) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Stars bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, #ffffff44, transparent),
+      radial-gradient(1px 1px at 30% 60%, #ffffff33, transparent),
+      radial-gradient(1px 1px at 70% 15%, #bf00ff55, transparent),
+      radial-gradient(1px 1px at 85% 70%, #00cfff44, transparent),
+      radial-gradient(2px 2px at 50% 40%, #ffffff22, transparent),
+      radial-gradient(1px 1px at 20% 85%, #ff00aa44, transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===================== HEADER ===================== */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,0,16,0.92);
+    border-bottom: 2px solid var(--neon-purple);
+    box-shadow: var(--glow-purple), 0 4px 32px #bf00ff22;
+    backdrop-filter: blur(12px);
+    padding: 0 2rem;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 1rem;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-main {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--neon-purple);
+    text-shadow: var(--glow-purple);
+    letter-spacing: 2px;
+    animation: glitch 5s infinite;
+  }
+
+  .logo-sub {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    color: var(--neon-blue);
+    text-shadow: var(--glow-blue);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  @keyframes glitch {
+    0%, 94%, 100% { text-shadow: var(--glow-purple); transform: none; }
+    95% { transform: skewX(-2deg); text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-blue); }
+    97% { transform: skewX(1deg); text-shadow: -2px 0 var(--neon-pink), 2px 0 var(--neon-blue); }
+  }
+
+  /* Search bar */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--neon-purple);
+    border-radius: 2px;
+    padding: 6px 12px;
+    gap: 8px;
+    flex: 1;
+    max-width: 360px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-bar:focus-within {
+    border-color: var(--neon-blue);
+    box-shadow: var(--glow-blue);
+  }
+
+  .search-bar input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    width: 100%;
+    letter-spacing: 1px;
+  }
+
+  .search-bar input::placeholder { color: var(--text-dim); }
+
+  .search-icon {
+    color: var(--neon-purple);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  nav {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  nav a {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+    box-shadow: var(--glow-purple);
+    text-shadow: var(--glow-purple);
+  }
+
+  /* ===================== TICKER ===================== */
+  .ticker {
+    background: var(--neon-purple);
+    overflow: hidden;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ticker-label {
+    background: #000;
+    color: var(--neon-yellow);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-right: 2px solid var(--neon-yellow);
+    letter-spacing: 1px;
+  }
+
+  .ticker-track {
+    display: flex;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+    padding-left: 40px;
+  }
+
+  .ticker-track span {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: #000;
+    padding-right: 60px;
+    letter-spacing: 1px;
+  }
+
+  .ticker-track span::before { content: '▶ '; }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ===================== HERO ===================== */
+  .hero {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 2.5rem auto 0;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+  }
+
+  .hero-main {
+    position: relative;
+    border: 2px solid var(--neon-purple);
+    box-shadow: var(--glow-purple), inset 0 0 40px #bf00ff0a;
+    background: var(--card);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+  }
+
+  .hero-main:hover {
+    box-shadow: 0 0 16px #bf00ffcc, 0 0 40px #bf00ff66;
+  }
+
+  .hero-img {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    display: block;
+    background: linear-gradient(135deg, #1a0035 0%, #000830 50%, #1a0020 100%);
+    position: relative;
+  }
+
+  /* Fake hero image with CSS art */
+  .hero-art {
+    width: 100%;
+    height: 340px;
+    background:
+      radial-gradient(ellipse at 30% 60%, #bf00ff33 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 40%, #00cfff22 0%, transparent 50%),
+      linear-gradient(180deg, #0a001a 0%, #000830 60%, #0a001a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent, transparent 40px, #bf00ff08 40px, #bf00ff08 41px),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, #bf00ff08 40px, #bf00ff08 41px);
+  }
+
+  .hero-art-emoji {
+    font-size: 90px;
+    filter: drop-shadow(0 0 20px #bf00ffcc);
+    animation: float 3s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .hero-tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: var(--neon-purple);
+    color: #000;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 4px 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hero-body {
+    padding: 1.2rem 1.4rem 1.4rem;
+  }
+
+  .hero-body h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #fff;
+    text-shadow: 0 0 10px #bf00ff88;
+    margin-bottom: 0.7rem;
+    letter-spacing: 1px;
+  }
+
+  .hero-body p {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--text-dim);
+  }
+
+  .hero-meta .date { color: var(--neon-blue); }
+  .hero-meta .author { color: var(--neon-pink); }
+
+  /* Side stories */
+  .hero-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .side-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .side-card:hover {
+    border-color: var(--neon-blue);
+    box-shadow: var(--glow-blue);
+  }
+
+  .side-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 6px #00cfff88);
+  }
+
+  .side-card h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    line-height: 1.8;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .side-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .side-card .tag {
+    display: inline-block;
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    color: #000;
+    background: var(--neon-blue);
+    padding: 1px 6px;
+    margin-bottom: 6px;
+  }
+
+  /* ===================== MAIN CONTENT ===================== */
+  .main-grid {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Section title */
+  .section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--neon-purple);
+    text-shadow: var(--glow-purple);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--neon-purple), transparent);
+  }
+
+  /* News grid */
+  .news-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .news-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+
+  .news-card:hover {
+    border-color: var(--neon-purple);
+    box-shadow: var(--glow-purple);
+    transform: translateY(-2px);
+  }
+
+  .news-card-art {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .news-card-art.purple { background: linear-gradient(135deg, #1a0035, #0a0020); }
+  .news-card-art.blue { background: linear-gradient(135deg, #001030, #000820); }
+  .news-card-art.pink { background: linear-gradient(135deg, #2a0020, #0a0015); }
+  .news-card-art.green { background: linear-gradient(135deg, #001a10, #000a08); }
+
+  .news-card-art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);
+  }
+
+  .news-card-body { padding: 0.8rem; }
+
+  .news-card-tag {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    padding: 1px 6px;
+    margin-bottom: 6px;
+    display: inline-block;
+    color: #000;
+  }
+
+  .tag-update { background: var(--neon-green); }
+  .tag-mod { background: var(--neon-purple); color: #fff; }
+  .tag-psych { background: var(--neon-blue); }
+  .tag-community { background: var(--neon-pink); }
+  .tag-engine { background: var(--neon-yellow); }
+  .tag-mobile { background: #ff6600; }
+
+  .news-card-body h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    line-height: 1.8;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .news-card-body p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .news-meta {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 8px;
+  }
+
+  .news-meta .date { color: var(--neon-blue); }
+
+  /* ===================== SIDEBAR ===================== */
+  .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  /* Mods em destaque */
+  .mod-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mod-card:hover {
+    border-color: var(--neon-pink);
+    box-shadow: var(--glow-pink);
+  }
+
+  .mod-rank {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--neon-purple);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .mod-rank.gold { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
+  .mod-rank.silver { color: #ccc; text-shadow: 0 0 8px #ccc; }
+  .mod-rank.bronze { color: #ff8c00; text-shadow: 0 0 8px #ff8c00; }
+
+  .mod-icon { font-size: 28px; flex-shrink: 0; }
+
+  .mod-info { flex: 1; min-width: 0; }
+
+  .mod-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.6;
+  }
+
+  .mod-engine {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .mod-stars {
+    font-size: 12px;
+    color: var(--neon-yellow);
+    flex-shrink: 0;
+    text-shadow: 0 0 6px var(--neon-yellow);
+  }
+
+  /* Stats box */
+  .stats-box {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    padding: 1rem;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #1a003a;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+  }
+
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--text-dim); }
+  .stat-value { color: var(--neon-blue); text-shadow: var(--glow-blue); }
+
+  /* Tag cloud */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .cloud-tag {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    padding: 3px 10px;
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .cloud-tag:hover {
+    border-color: var(--neon-purple);
+    color: var(--neon-purple);
+    box-shadow: var(--glow-purple);
+  }
+
+  /* ===================== FOOTER ===================== */
+  footer {
+    border-top: 1px solid var(--card-border);
+    background: var(--bg2);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: var(--neon-purple);
+    text-shadow: var(--glow-purple);
+    margin-bottom: 8px;
+  }
+
+  footer p {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* Search results overlay */
+  .search-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border: 1px solid var(--neon-purple);
+    border-top: none;
+    box-shadow: var(--glow-purple);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 200;
+  }
+
+  .search-results.visible { display: block; }
+
+  .search-result-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--card-border);
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .search-result-item:hover { background: #1a003a; }
+
+  .search-result-item .r-tag {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    padding: 1px 6px;
+    background: var(--neon-purple);
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .search-result-item .r-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 0; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-side { display: none; }
+    .main-grid { grid-template-columns: 1fr; }
+    .news-list { grid-template-columns: 1fr; }
+    nav { display: none; }
+    .search-bar { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <span class="logo-main">FUNKIN' NEWS</span>
+      <span class="logo-sub">// THE MOD GAZETTE //</span>
+    </a>
+
+    <div class="search-bar" style="position:relative;">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="BUSCAR NOTÍCIAS, MODS..." autocomplete="off" oninput="handleSearch(this.value)" onfocus="showResults()" onblur="setTimeout(hideResults, 200)">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <nav>
+      <a href="#" class="active">NOTÍCIAS</a>
+      <a href="#">MODS</a>
+      <a href="#">ENGINES</a>
+      <a href="#">COMUNIDADE</a>
+    </nav>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-label">BREAKING</div>
+  <div class="ticker-track" id="tickerTrack">
+    <span>Psych Engine 1.0 recebe patch de compatibilidade com Flixel 6</span>
+    <span>Vs Impostor V4 chega ao mobile com suporte a touch controls</span>
+    <span>BrenninhoEngine anuncia suporte oficial a iOS e Android</span>
+    <span>FNF: Week 8 confirmada pelo Newgrounds post</span>
+    <span>Novo fork do Kade Engine traz sistema de mods via HScript</span>
+    <span>Comunidade bate 50.000 mods publicados no GameBanana</span>
+    <span>Psych Engine 1.0 recebe patch de compatibilidade com Flixel 6</span>
+    <span>Vs Impostor V4 chega ao mobile com suporte a touch controls</span>
+    <span>BrenninhoEngine anuncia suporte oficial a iOS e Android</span>
+    <span>FNF: Week 8 confirmada pelo Newgrounds post</span>
+    <span>Novo fork do Kade Engine traz sistema de mods via HScript</span>
+    <span>Comunidade bate 50.000 mods publicados no GameBanana</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-main">
+    <div class="hero-art">
+      <span class="hero-art-emoji">🎵</span>
+    </div>
+    <div class="hero-tag">DESTAQUE</div>
+    <div class="hero-body">
+      <h1>PSYCH ENGINE 1.0 LANÇADO — SUPORTE TOTAL AO FLIXEL 6</h1>
+      <p>Após meses de desenvolvimento, a equipe do Psych Engine finalmente lançou a versão 1.0 com compatibilidade total com HaxeFlixel 6.x, melhorias de performance e novo sistema de eventos via HScript.</p>
+      <div class="hero-meta">
+        <span class="date">04 JUN 2026</span>
+        <span>•</span>
+        <span class="author">@shadow_mario_</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-side">
+    <div class="side-card">
+      <div class="side-icon">📱</div>
+      <div>
+        <div class="tag">MOBILE</div>
+        <h3>VS IMPOSTOR V4 MOBILE PORT</h3>
+        <p>Port completo com touch controls e suporte a Android 12+.</p>
+      </div>
+    </div>
+    <div class="side-card">
+      <div class="side-icon">⚙️</div>
+      <div>
+        <div class="tag">ENGINE</div>
+        <h3>KADE ENGINE FORK COM HSCRIPT</h3>
+        <p>Novo sistema de scripting via Iris integrado ao Kade.</p>
+      </div>
+    </div>
+    <div class="side-card">
+      <div class="side-icon">🏆</div>
+      <div>
+        <div class="tag">COMUNIDADE</div>
+        <h3>FUNKJAM 2026 — INSCRIÇÕES ABERTAS</h3>
+        <p>72 horas para criar o melhor mod. Prêmios em destaque.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-grid">
+  <div>
+    <div class="section-title">ÚLTIMAS NOTÍCIAS</div>
+    <div class="news-list" id="newsGrid">
+
+      <div class="news-card">
+        <div class="news-card-art purple">🟣</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-update">UPDATE</span>
+          <h3>HAXEFLIXEL 6.2 TRAZ MELHORIAS DE PERFORMANCE</h3>
+          <p>Novo sistema de batching reduz draw calls em até 40% em projetos grandes.</p>
+          <div class="news-meta"><span class="date">03 JUN</span><span>@haxeflixel</span></div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-card-art blue">🎮</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-mod">MOD</span>
+          <h3>VS SONIC.EXE 3.0 ANUNCIA DATA DE LANÇAMENTO</h3>
+          <p>Terceira versão do icônico mod chega com 5 semanas inéditas e novo engine.</p>
+          <div class="news-meta"><span class="date">02 JUN</span><span>@FunkinSonicTeam</span></div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-card-art pink">💻</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-engine">ENGINE</span>
+          <h3>BRENNINHOENGINE BETA — CI/CD ANDROID ESTÁVEL</h3>
+          <p>Pipeline GitHub Actions para Android/iOS/Desktop finalmente estabilizado com NDK r25c.</p>
+          <div class="news-meta"><span class="date">01 JUN</span><span>@Brenninho</span></div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-card-art green">🌐</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-community">COMUNIDADE</span>
+          <h3>GAMEBANANA ATINGE 50K MODS DE FNF</h3>
+          <p>Plataforma celebra marco histórico com curadoria especial dos melhores mods de todos os tempos.</p>
+          <div class="news-meta"><span class="date">31 MAI</span><span>@GameBanana</span></div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-card-art blue">📦</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-mobile">MOBILE</span>
+          <h3>ANDROID-MANAGER EXTENSION v2.0</h3>
+          <p>Nova versão da extensão Haxe/Lime adiciona BroadcastReceiver e battery monitoring.</p>
+          <div class="news-meta"><span class="date">30 MAI</span><span>@Brenninho</span></div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-card-art purple">🎸</div>
+        <div class="news-card-body">
+          <span class="news-card-tag tag-psych">PSYCH</span>
+          <h3>TUTORIAL: HSCRIPT-IRIS EM FORKS DO PSYCH ENGINE</h3>
+          <p>Guia completo para integrar ScriptPlugin, ScriptManager e ScriptAPI no seu fork.</p>
+          <div class="news-meta"><span class="date">29 MAI</span><span>@Funkin-Programming</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div>
+      <div class="section-title">MODS EM DESTAQUE</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+
+        <div class="mod-card">
+          <div class="mod-rank gold">#1</div>
+          <div class="mod-icon">😈</div>
+          <div class="mod-info">
+            <div class="mod-name">VS IMPOSTOR V4</div>
+            <div class="mod-engine">Psych Engine • Mobile</div>
+          </div>
+          <div class="mod-stars">★★★★★</div>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-rank silver">#2</div>
+          <div class="mod-icon">💙</div>
+          <div class="mod-info">
+            <div class="mod-name">VS SONIC.EXE 2.5</div>
+            <div class="mod-engine">FunkinSonicTeam</div>
+          </div>
+          <div class="mod-stars">★★★★★</div>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-rank bronze">#3</div>
+          <div class="mod-icon">🍌</div>
+          <div class="mod-info">
+            <div class="mod-name">BOB'S ONSLAUGHT</div>
+            <div class="mod-engine">Kade Engine • Mobile</div>
+          </div>
+          <div class="mod-stars">★★★★☆</div>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-rank">#4</div>
+          <div class="mod-icon">🎭</div>
+          <div class="mod-info">
+            <div class="mod-name">VS TABI</div>
+            <div class="mod-engine">Kade Engine</div>
+          </div>
+          <div class="mod-stars">★★★★☆</div>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-rank">#5</div>
+          <div class="mod-icon">🌸</div>
+          <div class="mod-info">
+            <div class="mod-name">MID-FIGHT MASSES</div>
+            <div class="mod-engine">Vanilla • Mobile</div>
+          </div>
+          <div class="mod-stars">★★★★☆</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">ESTATÍSTICAS</div>
+      <div class="stats-box">
+        <div class="stat-row">
+          <span class="stat-label">MODS PUBLICADOS</span>
+          <span class="stat-value">50,127</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">ENGINES ATIVOS</span>
+          <span class="stat-value">38</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">DEVS NA COMUNIDADE</span>
+          <span class="stat-value">12.4K</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">BUILDS ESTA SEMANA</span>
+          <span class="stat-value">3,891</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">TAGS POPULARES</div>
+      <div class="tag-cloud">
+        <span class="cloud-tag">PSYCH ENGINE</span>
+        <span class="cloud-tag">MOBILE</span>
+        <span class="cloud-tag">HSCRIPT</span>
+        <span class="cloud-tag">ANDROID</span>
+        <span class="cloud-tag">FLIXEL 6</span>
+        <span class="cloud-tag">IOS</span>
+        <span class="cloud-tag">KADE</span>
+        <span class="cloud-tag">GAMEBANANA</span>
+        <span class="cloud-tag">VANILLA</span>
+        <span class="cloud-tag">CHART</span>
+        <span class="cloud-tag">MODDING</span>
+        <span class="cloud-tag">HAXE</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">FUNKIN' NEWS</div>
+  <p>// FEITO PELA COMUNIDADE, PARA A COMUNIDADE //</p>
+  <p style="margin-top:6px;font-size:13px;">2026 • NOT AFFILIATED WITH NEWGROUNDS OR THE OFFICIAL FNF TEAM</p>
+</footer>
+
+<script>
+  const allContent = [
+    { tag: 'UPDATE', title: 'HaxeFlixel 6.2 traz melhorias de performance' },
+    { tag: 'MOD', title: 'Vs Sonic.EXE 3.0 anuncia data de lançamento' },
+    { tag: 'ENGINE', title: 'BrenninhoEngine Beta — CI/CD Android estável' },
+    { tag: 'COMUNIDADE', title: 'GameBanana atinge 50K mods de FNF' },
+    { tag: 'MOBILE', title: 'Android-Manager Extension v2.0' },
+    { tag: 'PSYCH', title: 'Tutorial: HScript-Iris em forks do Psych Engine' },
+    { tag: 'DESTAQUE', title: 'Psych Engine 1.0 lançado com suporte ao Flixel 6' },
+    { tag: 'MOBILE', title: 'Vs Impostor V4 mobile port' },
+    { tag: 'ENGINE', title: 'Kade Engine fork com HScript' },
+    { tag: 'JAM', title: 'FunkJam 2026 — inscrições abertas' },
+  ];
+
+  function handleSearch(val) {
+    const q = val.trim().toLowerCase();
+    const container = document.getElementById('searchResults');
+    if (!q) { container.classList.remove('visible'); return; }
+
+    const results = allContent.filter(i =>
+      i.title.toLowerCase().includes(q) || i.tag.toLowerCase().includes(q)
+    );
+
+    if (!results.length) {
+      container.innerHTML = `<div class="search-result-item"><span class="r-title" style="color:var(--text-dim)">Nenhum resultado encontrado.</span></div>`;
+    } else {
+      container.innerHTML = results.map(r => `
+        <div class="search-result-item">
+          <span class="r-tag">${r.tag}</span>
+          <span class="r-title">${r.title}</span>
+        </div>
+      `).join('');
+    }
+    container.classList.add('visible');
+  }
+
+  function showResults() {
+    const val = document.getElementById('searchInput').value;
+    if (val.trim()) document.getElementById('searchResults').classList.add('visible');
+  }
+
+  function hideResults() {
+    document.getElementById('searchResults').classList.remove('visible');
+  }
+
+  // Glitch effect on hover for news cards
+  document.querySelectorAll('.news-card, .side-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.transition = 'all 0.15s';
+    });
+  });
+</script>
+</body>
+</html>
