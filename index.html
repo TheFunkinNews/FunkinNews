@@ -1,722 +1,1154 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Funkin' News</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="Funkin' News — The #1 community-driven news hub for Friday Night Funkin' mods, engines, and developer releases.">
+<meta property="og:title" content="Funkin' News — The Mod Gazette">
+<meta property="og:description" content="Covering mods, engines, updates, and developer releases for the FNF community.">
+<title>Funkin' News — The Mod Gazette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0010;
-    --bg2: #100020;
-    --bg3: #14002a;
-    --neon-purple: #bf00ff;
-    --neon-blue: #00cfff;
-    --neon-pink: #ff00aa;
-    --neon-yellow: #ffe600;
-    --neon-green: #00ff88;
-    --text: #e8d5ff;
-    --text-dim: #8a6aaa;
-    --card: #140028;
-    --card-border: #2a0055;
-    --glow-purple: 0 0 8px #bf00ff88, 0 0 20px #bf00ff44;
-    --glow-blue: 0 0 8px #00cfff88, 0 0 20px #00cfff44;
-    --glow-pink: 0 0 8px #ff00aa88, 0 0 20px #ff00aa44;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px;
-    min-height: 100vh;
-    overflow-x: hidden;
-    cursor: default;
-  }
-
-  /* Scanlines overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px,
-      transparent 3px,
-      rgba(0,0,0,0.12) 3px,
-      rgba(0,0,0,0.12) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* Stars bg */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(1px 1px at 10% 20%, #ffffff44, transparent),
-      radial-gradient(1px 1px at 30% 60%, #ffffff33, transparent),
-      radial-gradient(1px 1px at 70% 15%, #bf00ff55, transparent),
-      radial-gradient(1px 1px at 85% 70%, #00cfff44, transparent),
-      radial-gradient(2px 2px at 50% 40%, #ffffff22, transparent),
-      radial-gradient(1px 1px at 20% 85%, #ff00aa44, transparent);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ===================== HEADER ===================== */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(10,0,16,0.92);
-    border-bottom: 2px solid var(--neon-purple);
-    box-shadow: var(--glow-purple), 0 4px 32px #bf00ff22;
-    backdrop-filter: blur(12px);
-    padding: 0 2rem;
-  }
-
-  .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    gap: 1rem;
-  }
-
-  .logo {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-
-  .logo-main {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 14px;
-    color: var(--neon-purple);
-    text-shadow: var(--glow-purple);
-    letter-spacing: 2px;
-    animation: glitch 5s infinite;
-  }
-
-  .logo-sub {
-    font-family: 'VT323', monospace;
-    font-size: 13px;
-    color: var(--neon-blue);
-    text-shadow: var(--glow-blue);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-  }
-
-  @keyframes glitch {
-    0%, 94%, 100% { text-shadow: var(--glow-purple); transform: none; }
-    95% { transform: skewX(-2deg); text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-blue); }
-    97% { transform: skewX(1deg); text-shadow: -2px 0 var(--neon-pink), 2px 0 var(--neon-blue); }
-  }
-
-  /* Search bar */
-  .search-bar {
-    display: flex;
-    align-items: center;
-    background: var(--bg2);
-    border: 1px solid var(--neon-purple);
-    border-radius: 2px;
-    padding: 6px 12px;
-    gap: 8px;
-    flex: 1;
-    max-width: 360px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .search-bar:focus-within {
-    border-color: var(--neon-blue);
-    box-shadow: var(--glow-blue);
-  }
-
-  .search-bar input {
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: 'VT323', monospace;
-    font-size: 18px;
-    width: 100%;
-    letter-spacing: 1px;
-  }
-
-  .search-bar input::placeholder { color: var(--text-dim); }
-
-  .search-icon {
-    color: var(--neon-purple);
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  nav {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  nav a {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--text-dim);
-    text-decoration: none;
-    padding: 6px 10px;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-    white-space: nowrap;
-  }
-
-  nav a:hover, nav a.active {
-    color: var(--neon-purple);
-    border-color: var(--neon-purple);
-    box-shadow: var(--glow-purple);
-    text-shadow: var(--glow-purple);
-  }
-
-  /* ===================== TICKER ===================== */
-  .ticker {
-    background: var(--neon-purple);
-    overflow: hidden;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .ticker-label {
-    background: #000;
-    color: var(--neon-yellow);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    padding: 0 12px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    flex-shrink: 0;
-    border-right: 2px solid var(--neon-yellow);
-    letter-spacing: 1px;
-  }
-
-  .ticker-track {
-    display: flex;
-    animation: ticker 30s linear infinite;
-    white-space: nowrap;
-    padding-left: 40px;
-  }
-
-  .ticker-track span {
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: #000;
-    padding-right: 60px;
-    letter-spacing: 1px;
-  }
-
-  .ticker-track span::before { content: '▶ '; }
-
-  @keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* ===================== HERO ===================== */
-  .hero {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 2.5rem auto 0;
-    padding: 0 2rem;
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
-  }
-
-  .hero-main {
-    position: relative;
-    border: 2px solid var(--neon-purple);
-    box-shadow: var(--glow-purple), inset 0 0 40px #bf00ff0a;
-    background: var(--card);
-    overflow: hidden;
-    cursor: pointer;
-    transition: box-shadow 0.3s;
-  }
-
-  .hero-main:hover {
-    box-shadow: 0 0 16px #bf00ffcc, 0 0 40px #bf00ff66;
-  }
-
-  .hero-img {
-    width: 100%;
-    height: 340px;
-    object-fit: cover;
-    display: block;
-    background: linear-gradient(135deg, #1a0035 0%, #000830 50%, #1a0020 100%);
-    position: relative;
-  }
-
-  /* Fake hero image with CSS art */
-  .hero-art {
-    width: 100%;
-    height: 340px;
-    background:
-      radial-gradient(ellipse at 30% 60%, #bf00ff33 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 40%, #00cfff22 0%, transparent 50%),
-      linear-gradient(180deg, #0a001a 0%, #000830 60%, #0a001a 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-art::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(90deg, transparent, transparent 40px, #bf00ff08 40px, #bf00ff08 41px),
-      repeating-linear-gradient(0deg, transparent, transparent 40px, #bf00ff08 40px, #bf00ff08 41px);
-  }
-
-  .hero-art-emoji {
-    font-size: 90px;
-    filter: drop-shadow(0 0 20px #bf00ffcc);
-    animation: float 3s ease-in-out infinite;
-    z-index: 1;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-
-  .hero-tag {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: var(--neon-purple);
-    color: #000;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    padding: 4px 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .hero-body {
-    padding: 1.2rem 1.4rem 1.4rem;
-  }
-
-  .hero-body h1 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    color: #fff;
-    text-shadow: 0 0 10px #bf00ff88;
-    margin-bottom: 0.7rem;
-    letter-spacing: 1px;
-  }
-
-  .hero-body p {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px;
-    color: var(--text-dim);
-    line-height: 1.5;
-    margin-bottom: 1rem;
-  }
-
-  .hero-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: var(--text-dim);
-  }
-
-  .hero-meta .date { color: var(--neon-blue); }
-  .hero-meta .author { color: var(--neon-pink); }
-
-  /* Side stories */
-  .hero-side {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .side-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    padding: 1rem;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .side-card:hover {
-    border-color: var(--neon-blue);
-    box-shadow: var(--glow-blue);
-  }
-
-  .side-icon {
-    font-size: 32px;
-    flex-shrink: 0;
-    filter: drop-shadow(0 0 6px #00cfff88);
-  }
-
-  .side-card h3 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    line-height: 1.8;
-    color: #fff;
-    margin-bottom: 6px;
-  }
-
-  .side-card p {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.4;
-  }
-
-  .side-card .tag {
-    display: inline-block;
-    font-family: 'VT323', monospace;
-    font-size: 13px;
-    color: #000;
-    background: var(--neon-blue);
-    padding: 1px 6px;
-    margin-bottom: 6px;
-  }
-
-  /* ===================== MAIN CONTENT ===================== */
-  .main-grid {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 2rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 2rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Section title */
-  .section-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: var(--neon-purple);
-    text-shadow: var(--glow-purple);
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, var(--neon-purple), transparent);
-  }
-
-  /* News grid */
-  .news-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .news-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  }
-
-  .news-card:hover {
-    border-color: var(--neon-purple);
-    box-shadow: var(--glow-purple);
-    transform: translateY(-2px);
-  }
-
-  .news-card-art {
-    height: 110px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 42px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .news-card-art.purple { background: linear-gradient(135deg, #1a0035, #0a0020); }
-  .news-card-art.blue { background: linear-gradient(135deg, #001030, #000820); }
-  .news-card-art.pink { background: linear-gradient(135deg, #2a0020, #0a0015); }
-  .news-card-art.green { background: linear-gradient(135deg, #001a10, #000a08); }
-
-  .news-card-art::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.02) 8px, rgba(255,255,255,0.02) 9px);
-  }
-
-  .news-card-body { padding: 0.8rem; }
-
-  .news-card-tag {
-    font-family: 'VT323', monospace;
-    font-size: 14px;
-    padding: 1px 6px;
-    margin-bottom: 6px;
-    display: inline-block;
-    color: #000;
-  }
-
-  .tag-update { background: var(--neon-green); }
-  .tag-mod { background: var(--neon-purple); color: #fff; }
-  .tag-psych { background: var(--neon-blue); }
-  .tag-community { background: var(--neon-pink); }
-  .tag-engine { background: var(--neon-yellow); }
-  .tag-mobile { background: #ff6600; }
-
-  .news-card-body h3 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    line-height: 1.8;
-    color: #fff;
-    margin-bottom: 6px;
-  }
-
-  .news-card-body p {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.4;
-    margin-bottom: 8px;
-  }
-
-  .news-meta {
-    font-family: 'VT323', monospace;
-    font-size: 14px;
-    color: var(--text-dim);
-    display: flex;
-    gap: 8px;
-  }
-
-  .news-meta .date { color: var(--neon-blue); }
-
-  /* ===================== SIDEBAR ===================== */
-  .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
-
-  /* Mods em destaque */
-  .mod-card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    padding: 0.9rem;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .mod-card:hover {
-    border-color: var(--neon-pink);
-    box-shadow: var(--glow-pink);
-  }
-
-  .mod-rank {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: var(--neon-purple);
-    width: 28px;
-    flex-shrink: 0;
-    text-align: center;
-  }
-
-  .mod-rank.gold { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow); }
-  .mod-rank.silver { color: #ccc; text-shadow: 0 0 8px #ccc; }
-  .mod-rank.bronze { color: #ff8c00; text-shadow: 0 0 8px #ff8c00; }
-
-  .mod-icon { font-size: 28px; flex-shrink: 0; }
-
-  .mod-info { flex: 1; min-width: 0; }
-
-  .mod-name {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    color: #fff;
-    margin-bottom: 4px;
-    line-height: 1.6;
-  }
-
-  .mod-engine {
-    font-family: 'VT323', monospace;
-    font-size: 14px;
-    color: var(--text-dim);
-  }
-
-  .mod-stars {
-    font-size: 12px;
-    color: var(--neon-yellow);
-    flex-shrink: 0;
-    text-shadow: 0 0 6px var(--neon-yellow);
-  }
-
-  /* Stats box */
-  .stats-box {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    padding: 1rem;
-  }
-
-  .stat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #1a003a;
-    font-family: 'VT323', monospace;
-    font-size: 18px;
-  }
-
-  .stat-row:last-child { border-bottom: none; }
-  .stat-label { color: var(--text-dim); }
-  .stat-value { color: var(--neon-blue); text-shadow: var(--glow-blue); }
-
-  /* Tag cloud */
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .cloud-tag {
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    padding: 3px 10px;
-    border: 1px solid var(--card-border);
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-
-  .cloud-tag:hover {
-    border-color: var(--neon-purple);
-    color: var(--neon-purple);
-    box-shadow: var(--glow-purple);
-  }
-
-  /* ===================== FOOTER ===================== */
-  footer {
-    border-top: 1px solid var(--card-border);
-    background: var(--bg2);
-    padding: 2rem;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .footer-logo {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 12px;
-    color: var(--neon-purple);
-    text-shadow: var(--glow-purple);
-    margin-bottom: 8px;
-  }
-
-  footer p {
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
-
-  /* Search results overlay */
-  .search-results {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--bg2);
-    border: 1px solid var(--neon-purple);
-    border-top: none;
-    box-shadow: var(--glow-purple);
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 200;
-  }
-
-  .search-results.visible { display: block; }
-
-  .search-result-item {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--card-border);
-    cursor: pointer;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    transition: background 0.15s;
-  }
-
-  .search-result-item:hover { background: #1a003a; }
-
-  .search-result-item .r-tag {
-    font-family: 'VT323', monospace;
-    font-size: 13px;
-    padding: 1px 6px;
-    background: var(--neon-purple);
-    color: #fff;
-    flex-shrink: 0;
-  }
-
-  .search-result-item .r-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 0; }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; }
-    .hero-side { display: none; }
-    .main-grid { grid-template-columns: 1fr; }
-    .news-list { grid-template-columns: 1fr; }
-    nav { display: none; }
-    .search-bar { max-width: none; }
-  }
+:root {
+  --bg:           #08000f;
+  --bg2:          #0e001c;
+  --bg3:          #130026;
+  --card:         #110022;
+  --card-hover:   #1a0035;
+  --card-border:  #28004e;
+  --neon-purple:  #bf00ff;
+  --neon-blue:    #00cfff;
+  --neon-pink:    #ff00aa;
+  --neon-yellow:  #ffe600;
+  --neon-green:   #00ff88;
+  --neon-orange:  #ff6600;
+  --text:         #e8d5ff;
+  --text-dim:     #7a5a9a;
+  --text-mid:     #b090d0;
+  --glow-p: 0 0 8px #bf00ff99, 0 0 24px #bf00ff44;
+  --glow-b: 0 0 8px #00cfff99, 0 0 24px #00cfff44;
+  --glow-k: 0 0 8px #ff00aa99, 0 0 24px #ff00aa44;
+  --glow-y: 0 0 8px #ffe60099, 0 0 24px #ffe60044;
+  --glow-g: 0 0 8px #00ff8899, 0 0 24px #00ff8844;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--neon-purple); }
+
+@keyframes glitch {
+  0%, 93%, 100% { text-shadow: var(--glow-p); transform: none; clip-path: none; }
+  94% { transform: skewX(-3deg) translateX(2px); text-shadow: 3px 0 var(--neon-pink), -3px 0 var(--neon-blue); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+  96% { transform: skewX(2deg) translateX(-2px); text-shadow: -3px 0 var(--neon-pink), 3px 0 var(--neon-blue); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+  98% { transform: none; clip-path: none; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: var(--glow-p); }
+  50% { box-shadow: 0 0 20px #bf00ffcc, 0 0 50px #bf00ff66; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scanline-flash {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes counter-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(8,0,15,0.94);
+  border-bottom: 2px solid var(--neon-purple);
+  box-shadow: var(--glow-p), 0 6px 40px #bf00ff18;
+  backdrop-filter: blur(16px);
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  height: 68px;
+  padding: 0 2rem;
+  gap: 1.2rem;
+}
+
+.logo { display: flex; flex-direction: column; gap: 3px; text-decoration: none; flex-shrink: 0; }
+
+.logo-main {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--neon-purple);
+  letter-spacing: 2px;
+  animation: glitch 6s infinite;
+}
+
+.logo-sub {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--neon-blue);
+  text-shadow: var(--glow-b);
+  letter-spacing: 5px;
+}
+
+.header-search {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+}
+
+.search-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border: 1px solid var(--neon-purple);
+  padding: 7px 13px;
+  gap: 9px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.search-wrap:focus-within {
+  border-color: var(--neon-blue);
+  box-shadow: var(--glow-b);
+}
+
+.search-wrap input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  width: 100%;
+  letter-spacing: 1px;
+}
+
+.search-wrap input::placeholder { color: var(--text-dim); }
+
+.search-icon { color: var(--neon-purple); font-size: 15px; flex-shrink: 0; }
+
+.search-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0; right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--neon-purple);
+  border-top: none;
+  box-shadow: var(--glow-p);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 300;
+}
+
+.search-dropdown.open { display: block; }
+
+.search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.search-item:hover { background: #1e0040; }
+
+.search-item .si-tag {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  padding: 1px 7px;
+  background: var(--neon-purple);
+  color: #fff;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.search-item .si-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.search-item .si-date {
+  margin-left: auto;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--neon-blue);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+nav a {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  transition: all .2s;
+}
+
+nav a:hover, nav a.active {
+  color: var(--neon-purple);
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-p);
+  text-shadow: var(--glow-p);
+}
+
+.ticker {
+  background: var(--neon-purple);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.ticker-badge {
+  background: #000;
+  color: var(--neon-yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 0 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-right: 2px solid var(--neon-yellow);
+  flex-shrink: 0;
+  letter-spacing: 1px;
+  text-shadow: var(--glow-y);
+}
+
+.ticker-scroll {
+  display: flex;
+  animation: ticker 36s linear infinite;
+  white-space: nowrap;
+  padding-left: 50px;
+}
+
+.ticker-scroll span {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: #000;
+  padding-right: 70px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.ticker-scroll span::before { content: '▶  '; }
+
+.cat-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--card-border);
+  position: sticky;
+  top: 68px;
+  z-index: 150;
+}
+
+.cat-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 44px;
+}
+
+.cat-inner::-webkit-scrollbar { display: none; }
+
+.cat-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 12px;
+  border: 1px solid var(--card-border);
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+
+.cat-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+.cat-btn.active {
+  background: var(--neon-purple);
+  color: #000;
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-p);
+}
+
+.page-wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.hero-card {
+  position: relative;
+  background: var(--card);
+  border: 2px solid var(--neon-purple);
+  box-shadow: var(--glow-p), inset 0 0 60px #bf00ff08;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .3s;
+  animation: pulse-border 4s ease-in-out infinite;
+}
+
+.hero-card:hover { box-shadow: 0 0 24px #bf00ffcc, 0 0 60px #bf00ff55; animation: none; }
+
+.hero-art {
+  width: 100%;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 25% 65%, #bf00ff2e 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 35%, #00cfff1a 0%, transparent 55%),
+    linear-gradient(175deg, #0c0020 0%, #00060e 55%, #0c0020 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent, transparent 48px, #bf00ff07 48px, #bf00ff07 49px),
+    repeating-linear-gradient(0deg,   transparent, transparent 48px, #bf00ff07 48px, #bf00ff07 49px);
+}
+
+.hero-art-icon {
+  font-size: 100px;
+  filter: drop-shadow(0 0 28px #bf00ffcc) drop-shadow(0 0 8px #ff00aa88);
+  animation: float 3.5s ease-in-out infinite;
+  z-index: 1;
+}
+
+.hero-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--neon-purple);
+  color: #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 5px 10px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
+.hero-new-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--neon-pink);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  padding: 4px 8px;
+  letter-spacing: 1px;
+  animation: scanline-flash 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+.hero-body { padding: 1.4rem 1.6rem 1.6rem; }
+
+.hero-body h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  line-height: 2;
+  color: #fff;
+  text-shadow: 0 0 12px #bf00ff88;
+  margin-bottom: .7rem;
+  letter-spacing: 1px;
+}
+
+.hero-body p {
+  font-size: 16px;
+  color: var(--text-mid);
+  line-height: 1.6;
+  margin-bottom: 1.1rem;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .8rem;
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+}
+
+.hero-meta .m-date { color: var(--neon-blue); }
+.hero-meta .m-author { color: var(--neon-pink); }
+.hero-meta .m-views { color: var(--neon-green); }
+
+.hero-read-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 10px 18px;
+  background: var(--neon-purple);
+  color: #000;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background .2s, box-shadow .2s;
+}
+
+.hero-read-btn:hover { background: #d400ff; box-shadow: var(--glow-p); }
+
+.hero-side { display: flex; flex-direction: column; gap: 1rem; }
+
+.side-story {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 1rem;
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.side-story:hover {
+  border-color: var(--neon-blue);
+  box-shadow: var(--glow-b);
+  background: var(--card-hover);
+}
+
+.ss-icon { font-size: 34px; flex-shrink: 0; filter: drop-shadow(0 0 6px #00cfff88); }
+
+.ss-body { min-width: 0; }
+
+.ss-tag {
+  display: inline-block;
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  color: #000;
+  background: var(--neon-blue);
+  padding: 1px 7px;
+  margin-bottom: 6px;
+}
+
+.ss-body h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  line-height: 1.9;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.ss-body p { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+
+.section-head h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--neon-purple);
+  text-shadow: var(--glow-p);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.section-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--neon-purple), transparent);
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.news-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s, transform .2s, box-shadow .2s, background .2s;
+  animation: fadeInUp .4s ease both;
+}
+
+.news-card:hover {
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-p);
+  transform: translateY(-3px);
+  background: var(--card-hover);
+}
+
+.news-card.hidden { display: none; }
+
+.nc-art {
+  height: 116px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46px;
+  position: relative;
+  overflow: hidden;
+}
+
+.nc-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 9px, rgba(255,255,255,0.018) 9px, rgba(255,255,255,0.018) 10px);
+}
+
+.nc-art.c-purple { background: linear-gradient(135deg, #1c003a, #0a0022); }
+.nc-art.c-blue   { background: linear-gradient(135deg, #001538, #00091a); }
+.nc-art.c-pink   { background: linear-gradient(135deg, #2e0022, #0e0018); }
+.nc-art.c-green  { background: linear-gradient(135deg, #001f12, #000c08); }
+.nc-art.c-orange { background: linear-gradient(135deg, #281000, #100600); }
+.nc-art.c-yellow { background: linear-gradient(135deg, #1e1a00, #0a0a00); }
+
+.nc-body { padding: .85rem; }
+
+.nc-tag {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  padding: 1px 7px;
+  display: inline-block;
+  margin-bottom: 7px;
+  letter-spacing: .5px;
+}
+
+.tag-update    { background: var(--neon-green);  color: #000; }
+.tag-mod       { background: var(--neon-purple); color: #fff; }
+.tag-psych     { background: var(--neon-blue);   color: #000; }
+.tag-community { background: var(--neon-pink);   color: #fff; }
+.tag-engine    { background: var(--neon-yellow); color: #000; }
+.tag-mobile    { background: var(--neon-orange); color: #fff; }
+.tag-tutorial  { background: #9900cc;            color: #fff; }
+.tag-release   { background: #00ccaa;            color: #000; }
+
+.nc-body h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  line-height: 1.9;
+  color: #fff;
+  margin-bottom: 7px;
+}
+
+.nc-body p { font-size: 13px; color: var(--text-dim); line-height: 1.45; margin-bottom: 9px; }
+
+.nc-meta {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nc-meta .m-date { color: var(--neon-blue); }
+.nc-meta .m-views { color: var(--neon-green); margin-left: auto; }
+
+.load-more-wrap { text-align: center; margin-bottom: 2.5rem; }
+
+.load-more-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 12px 28px;
+  background: none;
+  border: 2px solid var(--neon-purple);
+  color: var(--neon-purple);
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all .2s;
+  text-shadow: var(--glow-p);
+}
+
+.load-more-btn:hover {
+  background: var(--neon-purple);
+  color: #000;
+  box-shadow: var(--glow-p);
+  text-shadow: none;
+}
+
+.engines-section { margin-bottom: 2.5rem; }
+
+.engine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.engine-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 1.1rem;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.engine-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, var(--neon-purple));
+  box-shadow: 0 0 8px var(--accent, var(--neon-purple));
+}
+
+.engine-card:hover {
+  border-color: var(--accent, var(--neon-purple));
+  box-shadow: 0 0 10px var(--accent, var(--neon-purple)), 0 0 30px color-mix(in srgb, var(--accent, var(--neon-purple)) 30%, transparent);
+  background: var(--card-hover);
+}
+
+.ec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+
+.ec-icon { font-size: 30px; }
+
+.ec-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #fff;
+  line-height: 1.8;
+}
+
+.ec-version {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--accent, var(--neon-purple));
+  text-shadow: 0 0 6px var(--accent, var(--neon-purple));
+}
+
+.ec-desc { font-size: 13px; color: var(--text-dim); line-height: 1.4; margin-bottom: 10px; }
+
+.ec-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.ec-tag {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  padding: 1px 7px;
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+}
+
+.community-section { margin-bottom: 2.5rem; }
+
+.community-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.comm-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 1.2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.comm-card:hover {
+  border-color: var(--neon-pink);
+  box-shadow: var(--glow-k);
+  background: var(--card-hover);
+}
+
+.comm-icon { font-size: 38px; flex-shrink: 0; }
+
+.comm-body h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  line-height: 1.8;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.comm-body p { font-size: 13px; color: var(--text-dim); line-height: 1.4; margin-bottom: 8px; }
+
+.comm-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  flex-wrap: wrap;
+}
+
+.comm-meta .cm-date { color: var(--neon-blue); }
+.comm-meta .cm-badge {
+  background: var(--neon-pink);
+  color: #fff;
+  padding: 1px 7px;
+  font-size: 13px;
+}
+
+.sidebar { display: flex; flex-direction: column; gap: 1.8rem; }
+
+.video-block {
+  background: var(--card);
+  border: 1px solid var(--neon-blue);
+  box-shadow: var(--glow-b);
+  overflow: hidden;
+}
+
+.video-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  background: #060018;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.vh-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: var(--neon-blue);
+  text-shadow: var(--glow-b);
+  letter-spacing: 1px;
+  line-height: 1.8;
+}
+
+.vh-badge {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  background: var(--neon-blue);
+  color: #000;
+  padding: 2px 9px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-weight: 700;
+}
+
+.video-ratio {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+.video-ratio iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.video-footer {
+  padding: 9px 12px;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.video-footer .vf-author { color: var(--neon-pink); }
+
+.sb-section { display: flex; flex-direction: column; gap: .8rem; }
+
+.mod-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: .9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.mod-card:hover {
+  border-color: var(--neon-pink);
+  box-shadow: var(--glow-k);
+  background: var(--card-hover);
+}
+
+.mod-rank {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  width: 30px;
+  flex-shrink: 0;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.mod-rank.gold   { color: var(--neon-yellow); text-shadow: var(--glow-y); }
+.mod-rank.silver { color: #c8c8d8; text-shadow: 0 0 8px #c8c8d8; }
+.mod-rank.bronze { color: #ff8800; text-shadow: 0 0 8px #ff8800; }
+
+.mod-icon { font-size: 28px; flex-shrink: 0; }
+
+.mod-info { flex: 1; min-width: 0; }
+
+.mod-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: #fff;
+  margin-bottom: 4px;
+  line-height: 1.7;
+}
+
+.mod-engine { font-family: 'VT323', monospace; font-size: 15px; color: var(--text-dim); }
+
+.mod-stars { font-size: 11px; color: var(--neon-yellow); text-shadow: var(--glow-y); flex-shrink: 0; }
+
+.stats-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 1rem;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid #180036;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+}
+
+.stat-row:last-child { border-bottom: none; }
+.stat-label { color: var(--text-dim); }
+.stat-value { color: var(--neon-blue); text-shadow: var(--glow-b); font-size: 20px; }
+
+.tag-cloud {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.cloud-tag {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  padding: 3px 11px;
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .5px;
+}
+
+.cloud-tag:hover {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  box-shadow: var(--glow-p);
+}
+
+.newsletter-box {
+  background: var(--card);
+  border: 1px solid var(--neon-purple);
+  box-shadow: var(--glow-p);
+  padding: 1.2rem;
+}
+
+.nl-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--neon-purple);
+  text-shadow: var(--glow-p);
+  margin-bottom: 8px;
+  line-height: 1.8;
+  letter-spacing: 1px;
+}
+
+.nl-desc { font-size: 13px; color: var(--text-dim); margin-bottom: 12px; line-height: 1.4; }
+
+.nl-input-row { display: flex; gap: 0; }
+
+.nl-input-row input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--neon-purple);
+  border-right: none;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  outline: none;
+  letter-spacing: 1px;
+}
+
+.nl-input-row input::placeholder { color: var(--text-dim); }
+
+.nl-input-row button {
+  background: var(--neon-purple);
+  border: 1px solid var(--neon-purple);
+  color: #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 0 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background .2s;
+}
+
+.nl-input-row button:hover { background: #d400ff; }
+
+.devlog-section { margin-bottom: 2.5rem; }
+
+.devlog-list { display: flex; flex-direction: column; gap: .8rem; }
+
+.devlog-item {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--neon-purple);
+  padding: 1rem 1.1rem;
+  display: flex;
+  gap: 1rem;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.devlog-item:hover {
+  border-color: var(--neon-purple);
+  box-shadow: var(--glow-p);
+  background: var(--card-hover);
+}
+
+.dl-date {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--neon-blue);
+  flex-shrink: 0;
+  width: 60px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.dl-body { min-width: 0; }
+
+.dl-body h4 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #fff;
+  line-height: 1.8;
+  margin-bottom: 5px;
+}
+
+.dl-body p { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+
+.dl-author {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--neon-pink);
+  margin-top: 5px;
+}
+
+footer {
+  background: var(--bg2);
+  border-top: 2px solid var(--card-border);
+  margin-top: 3rem;
+  padding: 3rem 2rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-brand h3 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--neon-purple);
+  text-shadow: var(--glow-p);
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.footer-brand p { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px; }
+
+.footer-social { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.footer-social a {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  padding: 4px 12px;
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all .2s;
+  letter-spacing: .5px;
+}
+
+.footer-social a:hover {
+  border-color: var(--neon-blue);
+  color: var(--neon-blue);
+  box-shadow: var(--glow-b);
+}
+
+.footer-col h4 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--neon-purple);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+
+.footer-col ul li a {
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: .5px;
+  transition: color .2s;
+}
+
+.footer-col ul li a:hover { color: var(--neon-blue); }
+
+.footer-bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  border-top: 1px solid var(--card-border);
+  padding-top: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .8rem;
+}
+
+.footer-bottom p {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--text-dim);
+  letter-spacing: .5px;
+}
+
+.footer-bottom .fb-copy { color: var(--text-mid); }
+
+@media (max-width: 1024px) {
+  .hero-grid, .main-grid { grid-template-columns: 1fr; }
+  .hero-side { display: none; }
+  .engine-grid { grid-template-columns: 1fr 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 700px) {
+  .header-inner { padding: 0 1rem; }
+  .page-wrap { padding: 1.2rem 1rem 0; }
+  nav { display: none; }
+  .search-wrap { max-width: none; }
+  .news-grid { grid-template-columns: 1fr; }
+  .engine-grid { grid-template-columns: 1fr; }
+  .community-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .hero-art { height: 220px; }
+  .hero-art-icon { font-size: 70px; }
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
@@ -724,161 +1156,484 @@
       <span class="logo-sub">// THE MOD GAZETTE //</span>
     </a>
 
-    <div class="search-bar" style="position:relative;">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="BUSCAR NOTÍCIAS, MODS..." autocomplete="off" oninput="handleSearch(this.value)" onfocus="showResults()" onblur="setTimeout(hideResults, 200)">
-      <div class="search-results" id="searchResults"></div>
+    <div class="header-search">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="SEARCH NEWS, MODS, ENGINES..." autocomplete="off"
+               oninput="handleSearch(this.value)" onfocus="openSearch()" onblur="setTimeout(closeSearch,180)">
+      </div>
+      <div class="search-dropdown" id="searchDropdown"></div>
     </div>
 
     <nav>
-      <a href="#" class="active">NOTÍCIAS</a>
+      <a href="#" class="active">NEWS</a>
       <a href="#">MODS</a>
       <a href="#">ENGINES</a>
-      <a href="#">COMUNIDADE</a>
+      <a href="#">DEVLOGS</a>
+      <a href="#">COMMUNITY</a>
+      <a href="#">ABOUT</a>
     </nav>
   </div>
 </header>
 
-<!-- TICKER -->
 <div class="ticker">
-  <div class="ticker-label">BREAKING</div>
-  <div class="ticker-track" id="tickerTrack">
-    <span>Psych Engine 1.0 recebe patch de compatibilidade com Flixel 6</span>
-    <span>Vs Impostor V4 chega ao mobile com suporte a touch controls</span>
-    <span>BrenninhoEngine anuncia suporte oficial a iOS e Android</span>
-    <span>FNF: Week 8 confirmada pelo Newgrounds post</span>
-    <span>Novo fork do Kade Engine traz sistema de mods via HScript</span>
-    <span>Comunidade bate 50.000 mods publicados no GameBanana</span>
-    <span>Psych Engine 1.0 recebe patch de compatibilidade com Flixel 6</span>
-    <span>Vs Impostor V4 chega ao mobile com suporte a touch controls</span>
-    <span>BrenninhoEngine anuncia suporte oficial a iOS e Android</span>
-    <span>FNF: Week 8 confirmada pelo Newgrounds post</span>
-    <span>Novo fork do Kade Engine traz sistema de mods via HScript</span>
-    <span>Comunidade bate 50.000 mods publicados no GameBanana</span>
+  <div class="ticker-badge">BREAKING</div>
+  <div class="ticker-scroll" id="tickerScroll">
+    <span>Psych Engine 1.0 drops with full Flixel 6 support</span>
+    <span>Vs Impostor V4 mobile port now stable on Android 12+</span>
+    <span>BrenninhoEngine Beta — Android + iOS CI/CD pipeline stable</span>
+    <span>FNF Week 8 teased on official Newgrounds post</span>
+    <span>FunkinSonicTeam reveals VS SONIC.EXE Needlemouse — Sonic Roots</span>
+    <span>GameBanana hits 50,000 published FNF mods milestone</span>
+    <span>HaxeFlixel 6.2 batching update reduces draw calls by 40%</span>
+    <span>FunkJam 2026 registrations now open — 72h jam with prizes</span>
+    <span>Psych Engine 1.0 drops with full Flixel 6 support</span>
+    <span>Vs Impostor V4 mobile port now stable on Android 12+</span>
+    <span>BrenninhoEngine Beta — Android + iOS CI/CD pipeline stable</span>
+    <span>FNF Week 8 teased on official Newgrounds post</span>
+    <span>FunkinSonicTeam reveals VS SONIC.EXE Needlemouse — Sonic Roots</span>
+    <span>GameBanana hits 50,000 published FNF mods milestone</span>
+    <span>HaxeFlixel 6.2 batching update reduces draw calls by 40%</span>
+    <span>FunkJam 2026 registrations now open — 72h jam with prizes</span>
   </div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-main">
-    <div class="hero-art">
-      <span class="hero-art-emoji">🎵</span>
-    </div>
-    <div class="hero-tag">DESTAQUE</div>
-    <div class="hero-body">
-      <h1>PSYCH ENGINE 1.0 LANÇADO — SUPORTE TOTAL AO FLIXEL 6</h1>
-      <p>Após meses de desenvolvimento, a equipe do Psych Engine finalmente lançou a versão 1.0 com compatibilidade total com HaxeFlixel 6.x, melhorias de performance e novo sistema de eventos via HScript.</p>
-      <div class="hero-meta">
-        <span class="date">04 JUN 2026</span>
-        <span>•</span>
-        <span class="author">@shadow_mario_</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-side">
-    <div class="side-card">
-      <div class="side-icon">📱</div>
-      <div>
-        <div class="tag">MOBILE</div>
-        <h3>VS IMPOSTOR V4 MOBILE PORT</h3>
-        <p>Port completo com touch controls e suporte a Android 12+.</p>
-      </div>
-    </div>
-    <div class="side-card">
-      <div class="side-icon">⚙️</div>
-      <div>
-        <div class="tag">ENGINE</div>
-        <h3>KADE ENGINE FORK COM HSCRIPT</h3>
-        <p>Novo sistema de scripting via Iris integrado ao Kade.</p>
-      </div>
-    </div>
-    <div class="side-card">
-      <div class="side-icon">🏆</div>
-      <div>
-        <div class="tag">COMUNIDADE</div>
-        <h3>FUNKJAM 2026 — INSCRIÇÕES ABERTAS</h3>
-        <p>72 horas para criar o melhor mod. Prêmios em destaque.</p>
-      </div>
-    </div>
+<div class="cat-bar">
+  <div class="cat-inner">
+    <button class="cat-btn active" data-cat="all">ALL</button>
+    <button class="cat-btn" data-cat="update">UPDATE</button>
+    <button class="cat-btn" data-cat="mod">MOD</button>
+    <button class="cat-btn" data-cat="engine">ENGINE</button>
+    <button class="cat-btn" data-cat="psych">PSYCH</button>
+    <button class="cat-btn" data-cat="mobile">MOBILE</button>
+    <button class="cat-btn" data-cat="community">COMMUNITY</button>
+    <button class="cat-btn" data-cat="tutorial">TUTORIAL</button>
+    <button class="cat-btn" data-cat="release">RELEASE</button>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main-grid">
-  <div>
-    <div class="section-title">ÚLTIMAS NOTÍCIAS</div>
-    <div class="news-list" id="newsGrid">
+<div class="page-wrap">
 
-      <div class="news-card">
-        <div class="news-card-art purple">🟣</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-update">UPDATE</span>
-          <h3>HAXEFLIXEL 6.2 TRAZ MELHORIAS DE PERFORMANCE</h3>
-          <p>Novo sistema de batching reduz draw calls em até 40% em projetos grandes.</p>
-          <div class="news-meta"><span class="date">03 JUN</span><span>@haxeflixel</span></div>
+  <div class="hero-grid">
+    <div class="hero-card">
+      <div class="hero-art">
+        <span class="hero-art-icon">🎵</span>
+      </div>
+      <div class="hero-badge">FEATURED</div>
+      <div class="hero-new-badge">⚡ NEW</div>
+      <div class="hero-body">
+        <h1>PSYCH ENGINE 1.0 RELEASED — FULL FLIXEL 6 COMPATIBILITY</h1>
+        <p>After months of development, the Psych Engine team has officially released version 1.0 with complete HaxeFlixel 6.x support, major performance improvements across all platforms, and a reworked event system via HScript-Iris. Desktop, Android, and iOS builds are all available.</p>
+        <div class="hero-meta">
+          <span class="m-date">JUN 04 2026</span>
+          <span>•</span>
+          <span class="m-author">@shadow_mario_</span>
+          <span>•</span>
+          <span class="m-views">👁 14.2K views</span>
+        </div>
+        <button class="hero-read-btn">READ FULL ARTICLE →</button>
+      </div>
+    </div>
+
+    <div class="hero-side">
+      <div class="side-story">
+        <div class="ss-icon">📱</div>
+        <div class="ss-body">
+          <span class="ss-tag">MOBILE</span>
+          <h3>VS IMPOSTOR V4 MOBILE PORT</h3>
+          <p>Full port with touch controls, hitbox customization, and Android 12+ support. iOS build available on TestFlight.</p>
         </div>
       </div>
-
-      <div class="news-card">
-        <div class="news-card-art blue">🎮</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-mod">MOD</span>
-          <h3>VS SONIC.EXE 3.0 ANUNCIA DATA DE LANÇAMENTO</h3>
-          <p>Terceira versão do icônico mod chega com 5 semanas inéditas e novo engine.</p>
-          <div class="news-meta"><span class="date">02 JUN</span><span>@FunkinSonicTeam</span></div>
+      <div class="side-story">
+        <div class="ss-icon">⚙️</div>
+        <div class="ss-body">
+          <span class="ss-tag">ENGINE</span>
+          <h3>KADE ENGINE FORK + HSCRIPT</h3>
+          <p>New scripting system via Iris integrated, replacing old Lua backend. HScript-Iris offers better performance and sandboxing.</p>
         </div>
       </div>
-
-      <div class="news-card">
-        <div class="news-card-art pink">💻</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-engine">ENGINE</span>
-          <h3>BRENNINHOENGINE BETA — CI/CD ANDROID ESTÁVEL</h3>
-          <p>Pipeline GitHub Actions para Android/iOS/Desktop finalmente estabilizado com NDK r25c.</p>
-          <div class="news-meta"><span class="date">01 JUN</span><span>@Brenninho</span></div>
+      <div class="side-story">
+        <div class="ss-icon">🏆</div>
+        <div class="ss-body">
+          <span class="ss-tag">COMMUNITY</span>
+          <h3>FUNKJAM 2026 OPEN</h3>
+          <p>72-hour mod jam now accepting entries. Top 3 winners featured on the Funkin' News front page.</p>
         </div>
       </div>
-
-      <div class="news-card">
-        <div class="news-card-art green">🌐</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-community">COMUNIDADE</span>
-          <h3>GAMEBANANA ATINGE 50K MODS DE FNF</h3>
-          <p>Plataforma celebra marco histórico com curadoria especial dos melhores mods de todos os tempos.</p>
-          <div class="news-meta"><span class="date">31 MAI</span><span>@GameBanana</span></div>
+      <div class="side-story">
+        <div class="ss-icon">🛠️</div>
+        <div class="ss-body">
+          <span class="ss-tag">UPDATE</span>
+          <h3>HAXEFLIXEL 6.2 BATCH RENDERING</h3>
+          <p>New GPU batching pass cuts draw calls by up to 40%. All FNF engines on Flixel 6 benefit immediately.</p>
         </div>
       </div>
-
-      <div class="news-card">
-        <div class="news-card-art blue">📦</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-mobile">MOBILE</span>
-          <h3>ANDROID-MANAGER EXTENSION v2.0</h3>
-          <p>Nova versão da extensão Haxe/Lime adiciona BroadcastReceiver e battery monitoring.</p>
-          <div class="news-meta"><span class="date">30 MAI</span><span>@Brenninho</span></div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-card-art purple">🎸</div>
-        <div class="news-card-body">
-          <span class="news-card-tag tag-psych">PSYCH</span>
-          <h3>TUTORIAL: HSCRIPT-IRIS EM FORKS DO PSYCH ENGINE</h3>
-          <p>Guia completo para integrar ScriptPlugin, ScriptManager e ScriptAPI no seu fork.</p>
-          <div class="news-meta"><span class="date">29 MAI</span><span>@Funkin-Programming</span></div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-
+  <div class="main-grid">
     <div>
-      <div class="section-title">MODS EM DESTAQUE</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
+
+      <div class="section-head"><h2>LATEST NEWS</h2></div>
+      <div class="news-grid" id="newsGrid">
+
+        <div class="news-card" data-cat="update">
+          <div class="nc-art c-purple">⚡</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-update">UPDATE</span>
+            <h3>HAXEFLIXEL 6.2 — BATCH RENDERING OVERHAUL</h3>
+            <p>New sprite batching system merges draw calls by texture atlas, delivering a 40% reduction in GPU overhead on large stages.</p>
+            <div class="nc-meta"><span class="m-date">JUN 03</span><span>@haxeflixel</span><span class="m-views">👁 9.1K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="mod">
+          <div class="nc-art c-blue">🎮</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-mod">MOD</span>
+            <h3>VS SONIC.EXE 3.0 — RELEASE DATE CONFIRMED</h3>
+            <p>The third major installment arrives with 5 new weeks, cutscene overhaul, and a custom engine fork by FunkinSonicTeam.</p>
+            <div class="nc-meta"><span class="m-date">JUN 02</span><span>@FunkinSonicTeam</span><span class="m-views">👁 22.4K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="engine">
+          <div class="nc-art c-pink">⚙️</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-engine">ENGINE</span>
+            <h3>BRENNINHOENGINE BETA — ANDROID + IOS CI/CD STABLE</h3>
+            <p>GitHub Actions pipeline for multi-platform builds finally stabilized using NDK r25c, Haxe 4.3.4, and a custom hxcpp fork.</p>
+            <div class="nc-meta"><span class="m-date">JUN 01</span><span>@Brenninho</span><span class="m-views">👁 3.7K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="community">
+          <div class="nc-art c-green">🌐</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-community">COMMUNITY</span>
+            <h3>GAMEBANANA CROSSES 50,000 FNF MODS</h3>
+            <p>The platform celebrates the historic milestone with a curated collection of the community's most iconic and influential mods.</p>
+            <div class="nc-meta"><span class="m-date">MAY 31</span><span>@GameBanana</span><span class="m-views">👁 18.5K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="mobile">
+          <div class="nc-art c-orange">📱</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-mobile">MOBILE</span>
+            <h3>ANDROID-MANAGER EXTENSION v2.0 RELEASED</h3>
+            <p>New version of the Haxe/Lime extension adds BroadcastReceiver callbacks, battery monitoring with typed enums, and media access API.</p>
+            <div class="nc-meta"><span class="m-date">MAY 30</span><span>@Brenninho</span><span class="m-views">👁 2.1K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="tutorial">
+          <div class="nc-art c-purple">📖</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-tutorial">TUTORIAL</span>
+            <h3>HSCRIPT-IRIS INTEGRATION IN PSYCH ENGINE FORKS</h3>
+            <p>Full guide to wiring up ScriptPlugin, ScriptManager, ScriptAPI, and ScriptEvents in any Psych Engine fork for modding support.</p>
+            <div class="nc-meta"><span class="m-date">MAY 29</span><span>@Funkin-Programming</span><span class="m-views">👁 6.8K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="release">
+          <div class="nc-art c-yellow">🚀</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-release">RELEASE</span>
+            <h3>FLIXEL-3D HAXELIB — OPENGL EXTENSION FOR HAXEFLIXEL</h3>
+            <p>16-file OpenGL rendering extension covering Phong GLSL shaders, VBO/IBO GPU mesh management, scene graph, and 3D primitives.</p>
+            <div class="nc-meta"><span class="m-date">MAY 27</span><span>@Brenninho</span><span class="m-views">👁 4.4K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="psych">
+          <div class="nc-art c-blue">🧠</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-psych">PSYCH</span>
+            <h3>PSYCH ENGINE — FLIXEL 6 KEYBOARD GUARD PATCH</h3>
+            <p>Comprehensive patch wrapping all FlxG.keys, FlxG.mouse, and sound key blocks in #if desktop guards across all editor states.</p>
+            <div class="nc-meta"><span class="m-date">MAY 25</span><span>@shadow_mario_</span><span class="m-views">👁 5.2K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="community">
+          <div class="nc-art c-pink">🎸</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-community">COMMUNITY</span>
+            <h3>FUNKINSONIC TEAM — NEW GITHUB ORG LAUNCHED</h3>
+            <p>FunkinSonicTeam formally launches its GitHub organization for coordinated development on Sonic-themed FNF mods and ports.</p>
+            <div class="nc-meta"><span class="m-date">MAY 23</span><span>@FunkinSonicTeam</span><span class="m-views">👁 7.9K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="engine">
+          <div class="nc-art c-green">🍌</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-engine">ENGINE</span>
+            <h3>BANANA ENGINE — FULL PACKAGE RESTRUCTURE UNDER FUNKIN/</h3>
+            <p>Major restructure moves all source under the funkin/ package hierarchy, removes Newgrounds dependency, and adds Flixel 6 compat fixes.</p>
+            <div class="nc-meta"><span class="m-date">MAY 21</span><span>@Brenninho</span><span class="m-views">👁 1.8K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="mobile">
+          <div class="nc-art c-orange">🤖</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-mobile">MOBILE</span>
+            <h3>VS BOB ANDROID PORT — TOUCH HITBOX + SWIPE NAV</h3>
+            <p>Kade Engine fork receives touch hitbox implementation, swipe/tap navigation, and stripped Newgrounds/Google Play integrations.</p>
+            <div class="nc-meta"><span class="m-date">MAY 18</span><span>@Brenninho</span><span class="m-views">👁 3.0K</span></div>
+          </div>
+        </div>
+
+        <div class="news-card" data-cat="release">
+          <div class="nc-art c-yellow">🎤</div>
+          <div class="nc-body">
+            <span class="nc-tag tag-release">RELEASE</span>
+            <h3>FUNKINAI — IN-GAME CHAT ASSISTANT FOR HTML5</h3>
+            <p>New mod adding a thread-safe AI chat overlay to FNF with retry/rate-limiting logic, typing-effect UI, and GitHub Actions CI.</p>
+            <div class="nc-meta"><span class="m-date">MAY 15</span><span>@Brenninho</span><span class="m-views">👁 5.6K</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="load-more-wrap">
+        <button class="load-more-btn" id="loadMoreBtn">LOAD MORE ARTICLES ↓</button>
+      </div>
+
+      <div class="engines-section">
+        <div class="section-head"><h2>ENGINE TRACKER</h2></div>
+        <div class="engine-grid">
+
+          <div class="engine-card" style="--accent: var(--neon-purple)">
+            <div class="ec-header">
+              <div class="ec-icon">🧠</div>
+              <div>
+                <div class="ec-name">PSYCH ENGINE</div>
+                <div class="ec-version">v1.0 — LATEST</div>
+              </div>
+            </div>
+            <div class="ec-desc">The most widely used FNF community engine. Full HScript modding, chart editor, and Flixel 6 compatibility as of v1.0.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">HaxeFlixel 6</span>
+              <span class="ec-tag">HScript</span>
+              <span class="ec-tag">Desktop</span>
+              <span class="ec-tag">Mobile</span>
+            </div>
+          </div>
+
+          <div class="engine-card" style="--accent: var(--neon-blue)">
+            <div class="ec-header">
+              <div class="ec-icon">⚡</div>
+              <div>
+                <div class="ec-name">KADE ENGINE</div>
+                <div class="ec-version">v2.0 FORK — ACTIVE</div>
+              </div>
+            </div>
+            <div class="ec-desc">Performance-focused fork with custom note systems, replay recording, and new HScript-Iris scripting backend replacing Lua.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">HScript-Iris</span>
+              <span class="ec-tag">Replays</span>
+              <span class="ec-tag">Desktop</span>
+              <span class="ec-tag">Android</span>
+            </div>
+          </div>
+
+          <div class="engine-card" style="--accent: var(--neon-pink)">
+            <div class="ec-header">
+              <div class="ec-icon">🔥</div>
+              <div>
+                <div class="ec-name">BRENNINHOENGINE</div>
+                <div class="ec-version">BETA — CI/CD STABLE</div>
+              </div>
+            </div>
+            <div class="ec-desc">Mobile-first FNF engine fork with GitHub Actions CI for Android, iOS, and Desktop. NDK r25c + Haxe 4.3.4 build chain.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">Android</span>
+              <span class="ec-tag">iOS</span>
+              <span class="ec-tag">CI/CD</span>
+              <span class="ec-tag">NDK r25c</span>
+            </div>
+          </div>
+
+          <div class="engine-card" style="--accent: var(--neon-yellow)">
+            <div class="ec-header">
+              <div class="ec-icon">🍌</div>
+              <div>
+                <div class="ec-name">BANANA ENGINE</div>
+                <div class="ec-version">v0.4 — ACTIVE</div>
+              </div>
+            </div>
+            <div class="ec-desc">Clean-slate fork under the funkin/ package namespace. Newgrounds removed, Flixel 6 compatible, Windows CI via GitHub Actions.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">Flixel 6</span>
+              <span class="ec-tag">Windows</span>
+              <span class="ec-tag">Clean API</span>
+            </div>
+          </div>
+
+          <div class="engine-card" style="--accent: var(--neon-green)">
+            <div class="ec-header">
+              <div class="ec-icon">♾️</div>
+              <div>
+                <div class="ec-name">FOREVER EXTENDED</div>
+                <div class="ec-version">v1.2 — ACTIVE</div>
+              </div>
+            </div>
+            <div class="ec-desc">Feature-rich engine fork with mobile support, HScript modding, and multi-platform CI matrix covering Windows, Linux, Android.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">HScript</span>
+              <span class="ec-tag">Mobile</span>
+              <span class="ec-tag">Multi-platform</span>
+            </div>
+          </div>
+
+          <div class="engine-card" style="--accent: var(--neon-orange)">
+            <div class="ec-header">
+              <div class="ec-icon">🎯</div>
+              <div>
+                <div class="ec-name">MASTER ENGINE</div>
+                <div class="ec-version">WIP — IN DEVELOPMENT</div>
+              </div>
+            </div>
+            <div class="ec-desc">Experimental engine targeting unified desktop/mobile builds. Project.xml and GitHub Actions workflow currently being stabilized.</div>
+            <div class="ec-tags">
+              <span class="ec-tag">Experimental</span>
+              <span class="ec-tag">Unified Build</span>
+              <span class="ec-tag">WIP</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="community-section">
+        <div class="section-head"><h2>COMMUNITY EVENTS</h2></div>
+        <div class="community-grid">
+
+          <div class="comm-card">
+            <div class="comm-icon">🏆</div>
+            <div class="comm-body">
+              <h3>FUNKJAM 2026 — REGISTRATIONS OPEN</h3>
+              <p>The annual 72-hour modding jam is back. Create a complete FNF mod from scratch in 72 hours. Top entries featured on Funkin' News and GameBanana.</p>
+              <div class="comm-meta">
+                <span class="cm-date">JUN 10–12</span>
+                <span class="cm-badge">OPEN</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <div class="comm-icon">🎤</div>
+            <div class="comm-body">
+              <h3>FNF COMPOSER CONTEST 2026</h3>
+              <p>Submit original tracks for use in community mods. Open to all skill levels. Winning songs will be featured in the FunkJam 2026 pack.</p>
+              <div class="comm-meta">
+                <span class="cm-date">JUN 01–30</span>
+                <span class="cm-badge">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <div class="comm-icon">🌍</div>
+            <div class="comm-body">
+              <h3>GAMEBANANA 50K MODS CELEBRATION</h3>
+              <p>The community is curating the definitive list of the 50 best FNF mods ever published. Voting is open on the GameBanana Discord server.</p>
+              <div class="comm-meta">
+                <span class="cm-date">ONGOING</span>
+                <span class="cm-badge">VOTE NOW</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comm-card">
+            <div class="comm-icon">📚</div>
+            <div class="comm-body">
+              <h3>FNF MOBILE PORTING WORKSHOP</h3>
+              <p>Live workshop covering the full mobile porting pipeline for Psych Engine forks — Project.xml, NDK setup, touch controls, and CI/CD workflow.</p>
+              <div class="comm-meta">
+                <span class="cm-date">JUN 15</span>
+                <span class="cm-badge">UPCOMING</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="devlog-section">
+        <div class="section-head"><h2>DEVELOPER LOGS</h2></div>
+        <div class="devlog-list">
+
+          <div class="devlog-item">
+            <div class="dl-date">JUN<br>04</div>
+            <div class="dl-body">
+              <h4>BRENNINHOENGINE — NDK R25C PIPELINE FINALIZED</h4>
+              <p>After resolving persistent hxcpp type resolution issues with conditional compilation guards, the Android/iOS/Desktop build pipeline is now fully stable. All three targets pass CI on every push.</p>
+              <div class="dl-author">@Brenninho</div>
+            </div>
+          </div>
+
+          <div class="devlog-item">
+            <div class="dl-date">JUN<br>02</div>
+            <div class="dl-body">
+              <h4>FUNKINSONICTEAM — NEEDLEMOUSE WEEK 3 REVEALED</h4>
+              <p>Week 3 of the Sonic Roots mod features Amy Rose as a playable opponent, with original compositions and a new dialogue system built on top of the custom engine fork.</p>
+              <div class="dl-author">@FunkinSonicTeam</div>
+            </div>
+          </div>
+
+          <div class="devlog-item">
+            <div class="dl-date">MAY<br>30</div>
+            <div class="dl-body">
+              <h4>ANDROID-MANAGER — BROADCASTRECEIVER TYPED ENUMS</h4>
+              <p>The new BatteryReceiver callback system now exposes typed Haxe enums for battery state, plug type, and level. Context handling and permission management also refactored.</p>
+              <div class="dl-author">@Brenninho</div>
+            </div>
+          </div>
+
+          <div class="devlog-item">
+            <div class="dl-date">MAY<br>27</div>
+            <div class="dl-body">
+              <h4>FLIXEL-3D HAXELIB — VBO/IBO GPU PIPELINE COMPLETE</h4>
+              <p>The new GPU pipeline in flixel-3d manages vertex and index buffer objects directly, cutting draw overhead for complex 3D scenes. Quaternion-based scene graph rotation also merged.</p>
+              <div class="dl-author">@Brenninho</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sidebar">
+
+      <div>
+        <div class="section-head"><h2>MOD SPOTLIGHT</h2></div>
+        <div class="video-block">
+          <div class="video-header">
+            <div class="vh-title">VS SONIC.EXE:<br>NEEDLEMOUSE — SONIC ROOTS</div>
+            <div class="vh-badge">▶ WATCH</div>
+          </div>
+          <div class="video-ratio">
+            <iframe
+              src="https://www.youtube.com/embed/tcJWoy7SyPw"
+              title="FNF VS SONIC.EXE: Needlemouse | SONIC ROOTS"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="video-footer">
+            <span class="vf-author">@FunkinSonicTeam</span> &nbsp;•&nbsp; JUN 01 2026
+          </div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="section-head"><h2>TOP MODS</h2></div>
 
         <div class="mod-card">
           <div class="mod-rank gold">#1</div>
@@ -930,110 +1685,230 @@
           <div class="mod-stars">★★★★☆</div>
         </div>
 
-      </div>
-    </div>
+        <div class="mod-card">
+          <div class="mod-rank">#6</div>
+          <div class="mod-icon">🔥</div>
+          <div class="mod-info">
+            <div class="mod-name">VS WHITTY</div>
+            <div class="mod-engine">Vanilla Engine</div>
+          </div>
+          <div class="mod-stars">★★★★☆</div>
+        </div>
 
-    <div>
-      <div class="section-title">ESTATÍSTICAS</div>
-      <div class="stats-box">
-        <div class="stat-row">
-          <span class="stat-label">MODS PUBLICADOS</span>
-          <span class="stat-value">50,127</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">ENGINES ATIVOS</span>
-          <span class="stat-value">38</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">DEVS NA COMUNIDADE</span>
-          <span class="stat-value">12.4K</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">BUILDS ESTA SEMANA</span>
-          <span class="stat-value">3,891</span>
+      </div>
+
+      <div>
+        <div class="section-head"><h2>COMMUNITY STATS</h2></div>
+        <div class="stats-box">
+          <div class="stat-row">
+            <span class="stat-label">MODS PUBLISHED</span>
+            <span class="stat-value" id="statMods">50,127</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">ACTIVE ENGINES</span>
+            <span class="stat-value">38</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">COMMUNITY DEVS</span>
+            <span class="stat-value">12.4K</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">BUILDS THIS WEEK</span>
+            <span class="stat-value">3,891</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">OPEN ISSUES</span>
+            <span class="stat-value">247</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">JAM ENTRIES</span>
+            <span class="stat-value">89</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div>
-      <div class="section-title">TAGS POPULARES</div>
-      <div class="tag-cloud">
-        <span class="cloud-tag">PSYCH ENGINE</span>
-        <span class="cloud-tag">MOBILE</span>
-        <span class="cloud-tag">HSCRIPT</span>
-        <span class="cloud-tag">ANDROID</span>
-        <span class="cloud-tag">FLIXEL 6</span>
-        <span class="cloud-tag">IOS</span>
-        <span class="cloud-tag">KADE</span>
-        <span class="cloud-tag">GAMEBANANA</span>
-        <span class="cloud-tag">VANILLA</span>
-        <span class="cloud-tag">CHART</span>
-        <span class="cloud-tag">MODDING</span>
-        <span class="cloud-tag">HAXE</span>
+      <div>
+        <div class="section-head"><h2>NEWSLETTER</h2></div>
+        <div class="newsletter-box">
+          <div class="nl-title">STAY IN THE LOOP</div>
+          <div class="nl-desc">Get weekly FNF mod news, engine updates, and community highlights delivered straight to your inbox.</div>
+          <div class="nl-input-row">
+            <input type="email" placeholder="your@email.com" id="nlInput">
+            <button onclick="handleNewsletter()">SUB</button>
+          </div>
+          <div id="nlMsg" style="font-family:'VT323',monospace;font-size:15px;color:var(--neon-green);margin-top:8px;display:none;">✔ SUBSCRIBED! WELCOME TO THE CREW.</div>
+        </div>
       </div>
-    </div>
 
+      <div>
+        <div class="section-head"><h2>POPULAR TAGS</h2></div>
+        <div class="tag-cloud">
+          <span class="cloud-tag" onclick="filterCat('psych')">PSYCH ENGINE</span>
+          <span class="cloud-tag" onclick="filterCat('mobile')">MOBILE</span>
+          <span class="cloud-tag">HSCRIPT</span>
+          <span class="cloud-tag" onclick="filterCat('mobile')">ANDROID</span>
+          <span class="cloud-tag" onclick="filterCat('update')">FLIXEL 6</span>
+          <span class="cloud-tag" onclick="filterCat('mobile')">IOS</span>
+          <span class="cloud-tag">KADE</span>
+          <span class="cloud-tag">GAMEBANANA</span>
+          <span class="cloud-tag">VANILLA</span>
+          <span class="cloud-tag">CHART EDITOR</span>
+          <span class="cloud-tag">MODDING</span>
+          <span class="cloud-tag">HAXE</span>
+          <span class="cloud-tag">LIME</span>
+          <span class="cloud-tag">NDK</span>
+          <span class="cloud-tag">CI/CD</span>
+        </div>
+      </div>
+
+    </div>
   </div>
+
 </div>
 
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">FUNKIN' NEWS</div>
-  <p>// FEITO PELA COMUNIDADE, PARA A COMUNIDADE //</p>
-  <p style="margin-top:6px;font-size:13px;">2026 • NOT AFFILIATED WITH NEWGROUNDS OR THE OFFICIAL FNF TEAM</p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>FUNKIN' NEWS</h3>
+      <p>The community-driven news hub for the Friday Night Funkin' ecosystem. Covering mods, engines, developer releases, and community events since 2024.</p>
+      <div class="footer-social">
+        <a href="#">GITHUB</a>
+        <a href="#">TWITTER/X</a>
+        <a href="#">DISCORD</a>
+        <a href="#">GAMEBANANA</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>NAVIGATE</h4>
+      <ul>
+        <li><a href="#">Latest News</a></li>
+        <li><a href="#">Mod Reviews</a></li>
+        <li><a href="#">Engine Tracker</a></li>
+        <li><a href="#">Dev Logs</a></li>
+        <li><a href="#">Community Events</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>ENGINES</h4>
+      <ul>
+        <li><a href="#">Psych Engine</a></li>
+        <li><a href="#">Kade Engine</a></li>
+        <li><a href="#">BrenninhoEngine</a></li>
+        <li><a href="#">Banana Engine</a></li>
+        <li><a href="#">Forever Extended</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>RESOURCES</h4>
+      <ul>
+        <li><a href="#">Modding Wiki</a></li>
+        <li><a href="#">Mobile Porting Guide</a></li>
+        <li><a href="#">HScript Docs</a></li>
+        <li><a href="#">CI/CD Templates</a></li>
+        <li><a href="#">Submit News</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="fb-copy">© 2026 Funkin' News — Made by the community, for the community.</p>
+    <p>NOT AFFILIATED WITH NEWGROUNDS OR THE OFFICIAL FRIDAY NIGHT FUNKIN' TEAM.</p>
+  </div>
 </footer>
 
 <script>
-  const allContent = [
-    { tag: 'UPDATE', title: 'HaxeFlixel 6.2 traz melhorias de performance' },
-    { tag: 'MOD', title: 'Vs Sonic.EXE 3.0 anuncia data de lançamento' },
-    { tag: 'ENGINE', title: 'BrenninhoEngine Beta — CI/CD Android estável' },
-    { tag: 'COMUNIDADE', title: 'GameBanana atinge 50K mods de FNF' },
-    { tag: 'MOBILE', title: 'Android-Manager Extension v2.0' },
-    { tag: 'PSYCH', title: 'Tutorial: HScript-Iris em forks do Psych Engine' },
-    { tag: 'DESTAQUE', title: 'Psych Engine 1.0 lançado com suporte ao Flixel 6' },
-    { tag: 'MOBILE', title: 'Vs Impostor V4 mobile port' },
-    { tag: 'ENGINE', title: 'Kade Engine fork com HScript' },
-    { tag: 'JAM', title: 'FunkJam 2026 — inscrições abertas' },
-  ];
+const CONTENT = [
+  { cat:'update',    tag:'UPDATE',    title:'HaxeFlixel 6.2 — Batch Rendering Overhaul',               date:'JUN 03' },
+  { cat:'mod',       tag:'MOD',       title:'VS SONIC.EXE 3.0 — Release Date Confirmed',                date:'JUN 02' },
+  { cat:'engine',    tag:'ENGINE',    title:'BrenninhoEngine Beta — Android + iOS CI/CD Stable',         date:'JUN 01' },
+  { cat:'community', tag:'COMMUNITY', title:'GameBanana Crosses 50,000 FNF Mods',                       date:'MAY 31' },
+  { cat:'mobile',    tag:'MOBILE',    title:'Android-Manager Extension v2.0 Released',                  date:'MAY 30' },
+  { cat:'tutorial',  tag:'TUTORIAL',  title:'HScript-Iris Integration in Psych Engine Forks',           date:'MAY 29' },
+  { cat:'release',   tag:'RELEASE',   title:'Flixel-3D Haxelib — OpenGL Extension for HaxeFlixel',      date:'MAY 27' },
+  { cat:'psych',     tag:'PSYCH',     title:'Psych Engine — Flixel 6 Keyboard Guard Patch',             date:'MAY 25' },
+  { cat:'community', tag:'COMMUNITY', title:'FunkinSonic Team — New GitHub Org Launched',               date:'MAY 23' },
+  { cat:'engine',    tag:'ENGINE',    title:'Banana Engine — Package Restructure Under funkin/',         date:'MAY 21' },
+  { cat:'mobile',    tag:'MOBILE',    title:'VS Bob Android Port — Touch Hitbox + Swipe Nav',           date:'MAY 18' },
+  { cat:'release',   tag:'RELEASE',   title:'FunkinAI — In-Game Chat Assistant for HTML5',              date:'MAY 15' },
+  { cat:'psych',     tag:'PSYCH',     title:'Psych Engine 1.0 Released — Full Flixel 6 Compatibility',  date:'JUN 04' },
+  { cat:'mod',       tag:'MOD',       title:'VS Impostor V4 Mobile Port — Android 12+ Stable',         date:'JUN 02' },
+  { cat:'engine',    tag:'ENGINE',    title:'Kade Engine Fork — HScript-Iris Scripting Backend',        date:'MAY 28' },
+];
 
-  function handleSearch(val) {
-    const q = val.trim().toLowerCase();
-    const container = document.getElementById('searchResults');
-    if (!q) { container.classList.remove('visible'); return; }
+function handleSearch(val) {
+  const q = val.trim().toLowerCase();
+  const drop = document.getElementById('searchDropdown');
+  if (!q) { drop.classList.remove('open'); return; }
+  const hits = CONTENT.filter(i => i.title.toLowerCase().includes(q) || i.tag.toLowerCase().includes(q));
+  drop.innerHTML = hits.length
+    ? hits.map(r => `<div class="search-item"><span class="si-tag">${r.tag}</span><span class="si-title">${r.title}</span><span class="si-date">${r.date}</span></div>`).join('')
+    : `<div class="search-item"><span class="si-title" style="color:var(--text-dim)">No results found for "${val}"</span></div>`;
+  drop.classList.add('open');
+}
 
-    const results = allContent.filter(i =>
-      i.title.toLowerCase().includes(q) || i.tag.toLowerCase().includes(q)
-    );
+function openSearch() {
+  if (document.getElementById('searchInput').value.trim())
+    document.getElementById('searchDropdown').classList.add('open');
+}
 
-    if (!results.length) {
-      container.innerHTML = `<div class="search-result-item"><span class="r-title" style="color:var(--text-dim)">Nenhum resultado encontrado.</span></div>`;
-    } else {
-      container.innerHTML = results.map(r => `
-        <div class="search-result-item">
-          <span class="r-tag">${r.tag}</span>
-          <span class="r-title">${r.title}</span>
-        </div>
-      `).join('');
-    }
-    container.classList.add('visible');
-  }
+function closeSearch() {
+  document.getElementById('searchDropdown').classList.remove('open');
+}
 
-  function showResults() {
-    const val = document.getElementById('searchInput').value;
-    if (val.trim()) document.getElementById('searchResults').classList.add('visible');
-  }
-
-  function hideResults() {
-    document.getElementById('searchResults').classList.remove('visible');
-  }
-
-  // Glitch effect on hover for news cards
-  document.querySelectorAll('.news-card, .side-card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.transition = 'all 0.15s';
-    });
+function filterCat(cat) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  document.querySelectorAll('.news-card').forEach(c => {
+    c.classList.toggle('hidden', cat !== 'all' && c.dataset.cat !== cat);
   });
+  document.querySelectorAll('.news-card:not(.hidden)').forEach((c, i) => {
+    c.style.animationDelay = (i * 0.05) + 's';
+  });
+}
+
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => filterCat(btn.dataset.cat));
+});
+
+let extraLoaded = false;
+document.getElementById('loadMoreBtn').addEventListener('click', function() {
+  if (extraLoaded) return;
+  extraLoaded = true;
+  this.textContent = 'LOADING...';
+  setTimeout(() => {
+    const extra = [
+      { cat:'tutorial', tag:'TUTORIAL', icon:'🔧', color:'c-purple', title:'BUILDING A CUSTOM FPS COUNTER WITH ENGINE VERSION DISPLAY', desc:'Minimal FPS display showing only the FPS value and engine version string, no extra overhead.', date:'MAY 12', author:'@Brenninho', views:'1.4K' },
+      { cat:'mobile',   tag:'MOBILE',   icon:'🍎', color:'c-blue',   title:'IOS TESTFLIGHT SETUP FOR HNF ENGINE FORKS', desc:'Full walkthrough for getting an FNF engine fork onto iOS TestFlight via GitHub Actions and Fastlane.', date:'MAY 10', author:'@Brenninho', views:'2.7K' },
+      { cat:'engine',   tag:'ENGINE',   icon:'💡', color:'c-pink',   title:'DSCRIPT — OPEN-SOURCE LANGUAGE BUILT IN HAXE', desc:'New scripting language scaffolded with a CLI entry point, stdlib modules, AST definitions, and scope/environment infrastructure.', date:'MAY 08', author:'@Brenninho', views:'3.1K' },
+      { cat:'community',tag:'COMMUNITY',icon:'🎵', color:'c-green',  title:'FRAGILE — HAXEFLIXEL HORROR ADVENTURE GAME ANNOUNCED', desc:'New 2D horror adventure in HaxeFlixel targeting desktop, mobile, and HTML5. Non-standard project structure with custom entity system.', date:'MAY 06', author:'@Brenninho', views:'4.8K' },
+    ];
+    const grid = document.getElementById('newsGrid');
+    extra.forEach((n, i) => {
+      const div = document.createElement('div');
+      div.className = 'news-card';
+      div.dataset.cat = n.cat;
+      div.style.animationDelay = (i * 0.08) + 's';
+      div.innerHTML = `<div class="nc-art ${n.color}">${n.icon}</div><div class="nc-body"><span class="nc-tag tag-${n.cat}">${n.tag}</span><h3>${n.title}</h3><p>${n.desc}</p><div class="nc-meta"><span class="m-date">${n.date}</span><span>${n.author}</span><span class="m-views">👁 ${n.views}</span></div></div>`;
+      grid.appendChild(div);
+    });
+    this.textContent = 'ALL ARTICLES LOADED';
+    this.disabled = true;
+    this.style.opacity = '.4';
+    this.style.cursor = 'default';
+  }, 600);
+});
+
+function handleNewsletter() {
+  const v = document.getElementById('nlInput').value.trim();
+  const msg = document.getElementById('nlMsg');
+  if (!v || !v.includes('@')) return;
+  msg.style.display = 'block';
+  document.getElementById('nlInput').value = '';
+}
+
+let modCount = 50127;
+setInterval(() => {
+  modCount += Math.floor(Math.random() * 3);
+  document.getElementById('statMods').textContent = modCount.toLocaleString();
+}, 4000);
 </script>
 </body>
 </html>
